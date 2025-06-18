@@ -32,4 +32,14 @@ const server = http.createServer(async (req, res) => {
       const input = JSON.parse(body).input;
       const output = await handle(input);
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      r
+      res.end(JSON.stringify(output));
+    });
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+});
+
+server.listen(3000, () => {
+  console.log('Weather MCP server running on port 3000');
+});
