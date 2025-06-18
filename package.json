@@ -1,0 +1,17 @@
+{
+  "name": "weather-mcp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@smithery/cli": "^1.2.11",
+    "tsx": "^4.20.3"
+  }
+}
