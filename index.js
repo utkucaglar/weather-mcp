@@ -1,45 +1,37 @@
-import http from 'http';
+import express from 'express';
 import fetch from 'node-fetch';
 
-// MCP-benzeri handle fonksiyonu
-async function handle(input) {
-  const city = input || 'Istanbul';
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+
+app.post('/weather', async (req, res) => {
+  const city = req.body.city || 'Istanbul';
   const apiKey = '8094d87dcbeeb7f03a59c6db2bc1c8ce';
 
-  const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
-  const data = await res.json();
+  try {
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
+    const data = await response.json();
 
-  if (!data.main || !data.weather) {
-    return {
-      error: 'Weather data not available',
-      response: data
-    };
-  }
+    if (!data.main || !data.weather) {
+      return res.status(400).json({ error: 'Weather data not found', raw: data });
+    }
 
-  return {
-    city: data.name,
-    temperature: data.main.temp,
-    description: data.weather[0].description
-  };
-}
-
-// HTTP sunucusu başlat
-const server = http.createServer(async (req, res) => {
-  if (req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => { body += chunk; });
-    req.on('end', async () => {
-      const input = JSON.parse(body).input;
-      const output = await handle(input);
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(output));
+    return res.json({
+      city: data.name,
+      temperature: data.main.temp,
+      description: data.weather[0].description
     });
-  } else {
-    res.writeHead(404);
-    res.end();
+  } catch (error) {
+    res.status(500).json({ error: 'API error', details: error.message });
   }
 });
 
-server.listen(3000, () => {
-  console.log('Weather MCP server running on port 3000');
+app.get('/', (req, res) => {
+  res.send('Weather API is running!');
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
