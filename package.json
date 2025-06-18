@@ -12,6 +12,7 @@
   "description": "",
   "dependencies": {
     "@smithery/cli": "^1.2.11",
+    "node-fetch": "^3.3.2",
     "tsx": "^4.20.3"
   }
 }

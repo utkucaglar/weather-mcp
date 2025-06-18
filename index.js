@@ -1,4 +1,8 @@
-export default async function handle(input, tools) {
+import http from 'http';
+import fetch from 'node-fetch';
+
+// MCP-benzeri handle fonksiyonu
+async function handle(input) {
   const city = input || 'Istanbul';
   const apiKey = '8094d87dcbeeb7f03a59c6db2bc1c8ce';
 
@@ -7,7 +11,7 @@ export default async function handle(input, tools) {
 
   if (!data.main || !data.weather) {
     return {
-      error: 'Weather data not available. Check city name or API key.',
+      error: 'Weather data not available',
       response: data
     };
   }
@@ -18,3 +22,14 @@ export default async function handle(input, tools) {
     description: data.weather[0].description
   };
 }
+
+// HTTP sunucusu başlat
+const server = http.createServer(async (req, res) => {
+  if (req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', async () => {
+      const input = JSON.parse(body).input;
+      const output = await handle(input);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      r
